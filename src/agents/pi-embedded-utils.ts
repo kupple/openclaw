@@ -201,11 +201,19 @@ export function stripDowngradedToolCallText(text: string): string {
           }
           continue;
         }
-        if (ch === '"') { inString = true; continue; }
-        if (ch === "{" || ch === "[") { depth += 1; continue; }
+        if (ch === '"') {
+          inString = true;
+          continue;
+        }
+        if (ch === "{" || ch === "[") {
+          depth += 1;
+          continue;
+        }
         if (ch === "}" || ch === "]") {
           depth -= 1;
-          if (depth === 0) { return i + 1; }
+          if (depth === 0) {
+            return i + 1;
+          }
         }
       }
       return null;
@@ -214,9 +222,17 @@ export function stripDowngradedToolCallText(text: string): string {
       let escape = false;
       for (let i = index + 1; i < input.length; i += 1) {
         const ch = input[i];
-        if (escape) { escape = false; continue; }
-        if (ch === "\\") { escape = true; continue; }
-        if (ch === '"') { return i + 1; }
+        if (escape) {
+          escape = false;
+          continue;
+        }
+        if (ch === "\\") {
+          escape = true;
+          continue;
+        }
+        if (ch === '"') {
+          return i + 1;
+        }
       }
       return null;
     }
@@ -233,30 +249,48 @@ export function stripDowngradedToolCallText(text: string): string {
     let cursor = 0;
     for (const match of input.matchAll(markerRe)) {
       const start = match.index ?? 0;
-      if (start < cursor) { continue; }
+      if (start < cursor) {
+        continue;
+      }
       result += input.slice(cursor, start);
       let index = start + match[0].length;
-      while (index < input.length && (input[index] === " " || input[index] === "\t")) { index += 1; }
+      while (index < input.length && (input[index] === " " || input[index] === "\t")) {
+        index += 1;
+      }
       if (input[index] === "\r") {
         index += 1;
-        if (input[index] === "\n") { index += 1; }
+        if (input[index] === "\n") {
+          index += 1;
+        }
       } else if (input[index] === "\n") {
         index += 1;
       }
-      while (index < input.length && (input[index] === " " || input[index] === "\t")) { index += 1; }
+      while (index < input.length && (input[index] === " " || input[index] === "\t")) {
+        index += 1;
+      }
       if (input.slice(index, index + 9).toLowerCase() === "arguments") {
         index += 9;
-        if (input[index] === ":") { index += 1; }
-        if (input[index] === " ") { index += 1; }
+        if (input[index] === ":") {
+          index += 1;
+        }
+        if (input[index] === " ") {
+          index += 1;
+        }
         const end = consumeJsonish(input, index, { allowLeadingNewlines: true });
-        if (end !== null) { index = end; }
+        if (end !== null) {
+          index = end;
+        }
       }
       if (
         (input[index] === "\n" || input[index] === "\r") &&
         (result.endsWith("\n") || result.endsWith("\r") || result.length === 0)
       ) {
-        if (input[index] === "\r") { index += 1; }
-        if (input[index] === "\n") { index += 1; }
+        if (input[index] === "\r") {
+          index += 1;
+        }
+        if (input[index] === "\n") {
+          index += 1;
+        }
       }
       cursor = index;
     }
@@ -285,11 +319,7 @@ export function extractAssistantText(msg: AssistantMessage): string {
       sanitizeText: (text) =>
         stripThinkingTagsFromText(
           stripDowngradedToolCallText(
-            stripModelSpecialTokens(
-              stripMinimaxToolCallXml(
-                stripToolCallXml(text)
-              )
-            )
+            stripModelSpecialTokens(stripMinimaxToolCallXml(stripToolCallXml(text))),
           ),
         ).trim(),
       joinWith: "\n",
@@ -353,12 +383,16 @@ export function splitThinkingTaggedText(text: string): ThinkTaggedSplitBlock[] |
   let thinkingStart = 0;
   const blocks: ThinkTaggedSplitBlock[] = [];
   const pushText = (value: string) => {
-    if (!value) { return; }
+    if (!value) {
+      return;
+    }
     blocks.push({ type: "text", text: value });
   };
   const pushThinking = (value: string) => {
     const cleaned = value.trim();
-    if (!cleaned) { return; }
+    if (!cleaned) {
+      return;
+    }
     blocks.push({ type: "thinking", thinking: cleaned });
   };
   for (const match of text.matchAll(scanRe)) {

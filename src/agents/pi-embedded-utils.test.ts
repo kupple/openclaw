@@ -693,7 +693,9 @@ describe("parseQwenEmbeddedToolCalls", () => {
     const result = parseQwenEmbeddedToolCalls(text);
     expect(result.toolCalls).toHaveLength(1);
     expect(result.toolCalls[0].name).toBe("read");
-    expect(result.toolCalls[0].arguments.path).toBe("/Users/zhao/.openclaw/workspace/mysql_connect.py");
+    expect(result.toolCalls[0].arguments.path).toBe(
+      "/Users/zhao/.openclaw/workspace/mysql_connect.py",
+    );
     expect(result.remainingText).not.toContain("<tool_call>");
   });
 
@@ -730,7 +732,8 @@ describe("parseQwenEmbeddedToolCalls", () => {
   });
 
   it("preserves remaining text outside tool_call blocks", () => {
-    const text = "Before text.\n\n<tool_call>\n<function=read>\n<parameter=path>\n/test.py\n</parameter>\n</function>\n</tool_call>\n\nAfter text.";
+    const text =
+      "Before text.\n\n<tool_call>\n<function=read>\n<parameter=path>\n/test.py\n</parameter>\n</function>\n</tool_call>\n\nAfter text.";
     const result = parseQwenEmbeddedToolCalls(text);
     expect(result.toolCalls).toHaveLength(1);
     expect(result.remainingText).toContain("Before text.");
